@@ -14,7 +14,9 @@ import {RootStackNavigator} from './navigations/RootStackNavigator';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {store} from './store';
 import {Provider} from 'react-redux';
-import { useAppSelector } from './features/hooks/hook';
+import {QueryClient, QueryClientProvider, useQuery} from 'react-query';
+
+const queryClient = new QueryClient();
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -47,7 +49,6 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 }
 
 function App(): React.JSX.Element {
- 
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -57,9 +58,11 @@ function App(): React.JSX.Element {
   return (
     <>
       <Provider store={store}>
-        <NavigationContainer>
-          <RootStackNavigator />
-        </NavigationContainer>
+        <QueryClientProvider client={queryClient}>
+          <NavigationContainer>
+            <RootStackNavigator />
+          </NavigationContainer>
+        </QueryClientProvider>
       </Provider>
     </>
   );

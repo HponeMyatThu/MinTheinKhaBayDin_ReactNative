@@ -6,44 +6,43 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import SearchBar from './SearchBar';
-import data from '../api/data.json';
 import {RootStackScreenProps} from '../navigations/type';
 import {useNavigation} from '@react-navigation/native';
 import {useAppDispatch, useAppSelector} from '../features/hooks/hook';
-import { questionData } from '../features/BayDin/bayDinSlice';
+import {questionData} from '../features/BayDin/bayDinSlice';
 
 type Props = RootStackScreenProps<'QuestionScreen'>;
-type Navigation = Props['navigation'];
 
-const Question = () => {
-  const navigation = useNavigation<Navigation>();
-  const [search, setSearch] = useState<string>('');
+interface QuestionProps {
+  filteredQuestions: Question[];
+}
+
+const Question = ({filteredQuestions}: QuestionProps) => {
+  const navigation = useNavigation<Props['navigation']>();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [questionsPerPage, setQuestionsPerPage] = useState<number>(10);
   const [loadedQuestions, setLoadedQuestions] = useState<Array<any>>([]);
   const dispatch = useAppDispatch();
-
-  const handleToNumberListScreen = (questionNo: number, questionName: string) => {
-    dispatch(questionData({id: questionNo, name: questionName}))
+  
+  const handleToNumberListScreen = (
+    questionNo: number,
+    questionName: string,
+  ) => {
+    dispatch(questionData({id: questionNo, name: questionName}));
     return navigation.navigate('AnswerScreen');
   };
 
-  const filteredQuestions = data.questions.filter(item =>
-    item.questionName.toLowerCase().includes(search?.toLowerCase()),
-  );
-
   return (
     <>
-      <SearchBar onChangeText={(text: string) => setSearch(text)} />
       <View style={styles.main}>
         <ScrollView>
           {filteredQuestions && filteredQuestions.length > 0 ? (
             filteredQuestions.map((item, index) => (
               <TouchableOpacity
                 key={index}
-                onPress={() => handleToNumberListScreen(item.questionNo, item.questionName
-                )}>
+                onPress={() =>
+                  handleToNumberListScreen(item.questionNo, item.questionName)
+                }>
                 <View style={styles.textMainDiv}>
                   <View style={styles.number}>
                     <Text>{item.questionNo}</Text>
